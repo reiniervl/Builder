@@ -35,7 +35,8 @@ public class BuilderProcessor extends AbstractProcessor {
 		BuilderClass builderClass = new BuilderClass(enclosing);
 
 		for(Element field : fields) {
-			if (field.getAnnotation(BuilderField.class) == null) continue;
+			BuilderField fieldAnnotation = field.getAnnotation(BuilderField.class);
+			if (fieldAnnotation == null) continue;
 			builderClass.addElement(new BuilderElement(field));
 		}
 

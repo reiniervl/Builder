@@ -16,6 +16,19 @@ public class BuilderClass {
 	private String simpleName;
 	private List<BuilderElement> elements;
 
+	public BuilderClass(Element enclosingElement) {
+		this.enclosing = enclosingElement;
+		this.accessModifier = "public";
+		this.simpleName = enclosingElement.getSimpleName().toString();
+		this.className = this.simpleName + "Builder";
+		this.elements = new ArrayList<BuilderElement>();
+	}
+
+	public BuilderClass(Element enclosingElement, List<BuilderElement> elements) {
+		this(enclosingElement);
+		this.elements = elements;
+	}
+
 	public void addElement(BuilderElement element) {
 		this.elements.add(element);
 	}
@@ -31,19 +44,6 @@ public class BuilderClass {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public BuilderClass(Element enclosingElement) {
-		this.enclosing = enclosingElement;
-		this.accessModifier = "public";
-		this.simpleName = enclosingElement.getSimpleName().toString();
-		this.className = this.simpleName + "Builder";
-		this.elements = new ArrayList<BuilderElement>();
-	}
-
-	public BuilderClass(Element enclosingElement, List<BuilderElement> elements) {
-		this(enclosingElement);
-		this.elements = elements;
 	}
 
 	@Override

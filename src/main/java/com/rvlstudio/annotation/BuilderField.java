@@ -15,4 +15,5 @@ import java.lang.annotation.Target;
 @Target({ FIELD })
 @Retention(SOURCE)
 public @interface BuilderField {
+	boolean required() default false;
 }

@@ -8,6 +8,7 @@ public class BuilderElement {
 	private String fieldNameCapatalized;
 	private String fieldType;
 	private String returnType;
+	private boolean required;
 
 	public BuilderElement(Element element) {
 		this(element, element.getEnclosingElement().getSimpleName() + "Builder");
@@ -19,14 +20,9 @@ public class BuilderElement {
 		this.fieldNameCapatalized = BuilderElement.capatalize(this.fieldName);
 		this.fieldType = element.asType().toString();
 		this.returnType = returnType;
-	}
 
-	public BuilderElement(String accessModifier, String returnType, String fieldName, String fieldType) {
-		this.accessModifier = accessModifier;
-		this.returnType = returnType;
-		this.fieldName = fieldName;
-		this.fieldNameCapatalized = BuilderElement.capatalize(fieldName);
-		this.fieldType = fieldType;
+		BuilderField bf = element.getAnnotation(BuilderField.class);
+		if(bf != null && bf.required()) this.required = true;
 	}
 	
 	public String generate() {
@@ -46,6 +42,10 @@ public class BuilderElement {
 		sb.append("\t}");
 
 		return sb.toString();
+	}
+
+	public boolean isRequired() {
+		return this.required;
 	}
 
 	@Override
