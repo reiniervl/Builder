@@ -43,11 +43,7 @@ public class BuilderElement {
 
 		return sb.toString();
 	}
-
-	public boolean isRequired() {
-		return this.required;
-	}
-
+	
 	@Override
 	public String toString() {
 		return this.generate();
@@ -59,5 +55,53 @@ public class BuilderElement {
 			result = var.substring(0, 1).toUpperCase() + var.substring(1);
 		}
 		return result;
+	}
+	
+	public String getAccessModifier() {
+		return accessModifier;
+	}
+	
+	public void setAccessModifier(String accessModifier) {
+		this.accessModifier = accessModifier;
+	}
+	
+	public String getFieldName() {
+		return fieldName;
+	}
+	
+	public void setFieldName(String fieldName) {
+		this.fieldName = fieldName;
+	}
+	
+	public String getFieldNameCapatalized() {
+		return fieldNameCapatalized;
+	}
+	
+	public void setFieldNameCapatalized(String fieldNameCapatalized) {
+		this.fieldNameCapatalized = fieldNameCapatalized;
+	}
+	
+	public String getFieldType() {
+		return fieldType;
+	}
+	
+	public void setFieldType(String fieldType) {
+		this.fieldType = fieldType;
+	}
+	
+	public String getReturnType() {
+		return returnType;
+	}
+	
+	public void setReturnType(String returnType) {
+		this.returnType = returnType;
+	}
+	
+	public boolean isRequired() {
+		return required;
+	}
+	
+	public void setRequired(boolean required) {
+		this.required = required;
 	}
 }
