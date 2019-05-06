@@ -20,9 +20,6 @@ public class BuilderProcessor extends AbstractProcessor {
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
 		for (TypeElement annotation : annotations) {
 			for (Element element : roundEnv.getElementsAnnotatedWith(annotation)) {
-				if (element.getKind() != ElementKind.CLASS) {
-					continue;
-				}
 				List<Element> enclosedElements = element.getEnclosedElements().stream()
 						.filter((e) -> e.getKind() == ElementKind.FIELD).collect(Collectors.toList());
 				this.parseBuilderClass(element, enclosedElements);
