@@ -2,7 +2,7 @@ package com.rvlstudio.annotation;
 
 import javax.lang.model.element.Element;
 
-public class BuilderElement {
+class BuilderElement {
 	private Element element;
 	private String accessModifier;
 	private String fieldName;

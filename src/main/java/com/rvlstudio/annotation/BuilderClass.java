@@ -9,7 +9,7 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
 import javax.tools.JavaFileObject;
 
-public class BuilderClass {
+class BuilderClass {
 	private Element enclosing;
 	private String accessModifier;
 	private String className;
