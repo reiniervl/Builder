@@ -18,16 +18,16 @@ class BuilderInterface {
 			if(e.isRequired()) {
 				if(i+1 < elements.size()) {
 					if(elements.get(i+1).isRequired()) e.setReturnType(elements.get(i+1).getFieldNameCapatalized() + "Builder");
-					ifaces.add(
-						new BuilderInterface(
-							e.getFieldNameCapatalized() + "Builder",
-							"with" + e.getFieldNameCapatalized(),
-							e.getReturnType(),
-							e.getFieldType(),
-							e.getFieldName()
-						)
-					);
 				}
+				ifaces.add(
+					new BuilderInterface(
+						e.getFieldNameCapatalized() + "Builder",
+						"with" + e.getFieldNameCapatalized(),
+						e.getReturnType(),
+						e.getFieldType(),
+						e.getFieldName()
+					)
+				);
 			}
 		}
 

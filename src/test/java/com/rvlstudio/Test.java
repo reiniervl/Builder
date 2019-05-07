@@ -5,13 +5,13 @@ import com.rvlstudio.annotation.BuilderField;
 
 @Builder
 public class Test {
-	@BuilderField
+	@BuilderField(required = true)
 	private String var1;
 
 	@BuilderField(required = true)
 	private int var2;
 
-	@BuilderField
+	@BuilderField(required = true)
 	private int var3;
 	
 	@BuilderField(required=true)
