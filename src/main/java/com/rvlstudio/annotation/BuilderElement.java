@@ -3,6 +3,7 @@ package com.rvlstudio.annotation;
 import javax.lang.model.element.Element;
 
 public class BuilderElement {
+	private Element element;
 	private String accessModifier;
 	private String fieldName;
 	private String fieldNameCapatalized;
@@ -15,6 +16,7 @@ public class BuilderElement {
 	}
 
 	public BuilderElement(Element element, String returnType) {
+		this.element = element;
 		this.accessModifier = "public";
 		this.fieldName = element.getSimpleName().toString();
 		this.fieldNameCapatalized = BuilderElement.capatalize(this.fieldName);
@@ -103,5 +105,9 @@ public class BuilderElement {
 	
 	public void setRequired(boolean required) {
 		this.required = required;
+	}
+	
+	public Element get() {
+		return this.element;
 	}
 }

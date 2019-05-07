@@ -16,12 +16,14 @@ class BuilderInterface {
 		for(int i = 0; i < elements.size(); i++) {
 			BuilderElement e = elements.get(i);
 			if(e.isRequired()) {
+				
+				String className = e.get().getEnclosingElement().getSimpleName().toString();
 				if(i+1 < elements.size()) {
-					if(elements.get(i+1).isRequired()) e.setReturnType(elements.get(i+1).getFieldNameCapatalized() + "Builder");
+					if(elements.get(i+1).isRequired()) e.setReturnType(className + elements.get(i+1).getFieldNameCapatalized() + "Builder");
 				}
 				ifaces.add(
 					new BuilderInterface(
-						e.getFieldNameCapatalized() + "Builder",
+						className + e.getFieldNameCapatalized() + "Builder",
 						"with" + e.getFieldNameCapatalized(),
 						e.getReturnType(),
 						e.getFieldType(),
