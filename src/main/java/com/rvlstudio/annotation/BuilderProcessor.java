@@ -10,7 +10,6 @@ import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
-import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.TypeElement;
 
 @SupportedAnnotationTypes("com.rvlstudio.annotation.Builder")
@@ -20,22 +19,33 @@ public class BuilderProcessor extends AbstractProcessor {
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
 		for (TypeElement annotation : annotations) {
 			for (Element element : roundEnv.getElementsAnnotatedWith(annotation)) {
-				List<Element> enclosedElements = element.getEnclosedElements().stream()
-						.filter((e) -> e.getKind() == ElementKind.FIELD).collect(Collectors.toList());
-				this.parseBuilderClass(element, enclosedElements);
+				List<Element> enclosedFields = element.getEnclosedElements().stream()
+						.filter((e) -> e.getKind().isField()).collect(Collectors.toList());
+				this.parseBuilderClass(element, enclosedFields);
 			}
 		}
 		return false;
 	}
 
 	private void parseBuilderClass(Element enclosing, List<Element> fields) {
-		BuilderClass builderClass = new BuilderClass(enclosing);
+		BuilderClass builderClass;
 
-		for(Element field : fields) {
-			BuilderField fieldAnnotation = field.getAnnotation(BuilderField.class);
-			if (fieldAnnotation == null) continue;
-			builderClass.addElement(new BuilderElement(field));
+		if(enclosing.getAnnotation(Builder.class).all()) {
+			List<BuilderElement> be = fields.stream().map((f) -> new BuilderElement(f)).collect(Collectors.toList());
+			builderClass = new BuilderClass(enclosing, be);
+		} else {
+			List<BuilderElement> be = fields.stream()
+				.filter((f) -> f.getAnnotation(BuilderField.class) != null)
+				.map((f) -> new BuilderElement(f))
+				.collect(Collectors.toList());
+				builderClass = new BuilderClass(enclosing, be);
 		}
+
+		// for(Element field : fields) {
+		// 	BuilderField fieldAnnotation = field.getAnnotation(BuilderField.class);
+		// 	if (fieldAnnotation == null) continue;
+		// 	builderClass.addElement(new BuilderElement(field));
+		// }
 
 		builderClass.write(processingEnv);
 	}

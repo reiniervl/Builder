@@ -15,9 +15,10 @@ import java.lang.annotation.Target;
  * </p>
  *
  * @author Reinier van Leussen
- * @version 0.8.2
+ * @version 0.9.8
  */
 @Target({ TYPE })
 @Retention(SOURCE)
 public @interface Builder {
+	boolean all() default false;
 }
