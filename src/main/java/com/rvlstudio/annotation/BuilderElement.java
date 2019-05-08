@@ -1,6 +1,7 @@
 package com.rvlstudio.annotation;
 
 import javax.lang.model.element.Element;
+import javax.validation.constraints.NotNull;
 
 class BuilderElement {
 	private Element element;
@@ -25,6 +26,7 @@ class BuilderElement {
 
 		BuilderField bf = element.getAnnotation(BuilderField.class);
 		if(bf != null && bf.required()) this.required = true;
+		else if(element.getAnnotation(NotNull.class) != null) this.required = true;
 	}
 	
 	public String generate() {

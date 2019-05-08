@@ -9,9 +9,11 @@ import java.lang.annotation.Target;
 /**
  * <p>
  * Instance variabelen worden gebruikt om een builder class te maken. De class
- * die wordt gegenereerd is de naam van de originele class + 'Builder'. Alleen
- * de variablen die geannoteerd zijn met: {@code BuilderField} worden gebruikt
- * om de builder class te genereren.
+ * die wordt gegenereerd is de naam van de originele class + 'Builder'. 
+ * Standaard worden alleen de properties die geannoteerd zijn met: 
+ * {@code BuilderField} worden gebruikt om de builder class te genereren.
+ * Als het argument {@code all=true} wordt gegeven, worden alle properties
+ * gebruikt om een builder te maken.
  * </p>
  *
  * @author Reinier van Leussen
@@ -20,5 +22,9 @@ import java.lang.annotation.Target;
 @Target({ TYPE })
 @Retention(SOURCE)
 public @interface Builder {
+	/**
+	 * Alle properties/fields worden gebruikt om een builder te maken als
+	 * de waarde {@code true} wordt megegeven. Standaard waarde is {@code false}
+	 */
 	boolean all() default false;
 }

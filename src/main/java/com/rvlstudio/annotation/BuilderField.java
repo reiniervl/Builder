@@ -8,12 +8,18 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
 /**
- * Fields annotated whit this annotation, enclosed by a class that is annotated
- * with the {@code Builder} annotation will be used to create the builder.
+ * Fields geannoteerd met deze annotatie worden gebruikt om een builder te
+ * maken, tenzij de waarde {@code all=true} wordt meegegeven aan de
+ * Builder annotatie.
  */
 @Documented
 @Target({ FIELD })
 @Retention(SOURCE)
 public @interface BuilderField {
+	/**
+	 * Standaard waarde is {@code false}. Als de waarde {@code true} wordt
+	 * gegeven, dan wordt van de field naam en interface gegenereerd,
+	 * dat geimplementeerd wordt door de builder-class.
+	 */
 	boolean required() default false;
 }
