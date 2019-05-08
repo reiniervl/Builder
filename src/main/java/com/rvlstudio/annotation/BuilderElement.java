@@ -37,10 +37,26 @@ class BuilderElement {
 			this.fieldNameCapatalized,
 			this.fieldType,
 			this.fieldName));
-		
-		sb.append(String.format("\t\tthis.result.set%s(%s);\n", 
-			this.fieldNameCapatalized, 
-			this.fieldName));
+
+		if(this.isRequired()) {
+			sb.append("\t\t")
+				.append("try {")
+				.append("\n\t\t\t")
+				.append(String.format("java.lang.reflect.Field field = result.getClass().getDeclaredField(\"%s\");", this.fieldName))
+				.append("\n\t\t\t")
+				.append("field.setAccessible(true);")
+				.append("\n\t\t\t")
+				.append(String.format("field.set(result, %s);", this.fieldName))
+				.append("\n\t\t")
+				.append("} catch(NoSuchFieldException | SecurityException | IllegalAccessException e) {")
+				.append("\n\t\t\t")
+				.append("e.printStackTrace();")
+				.append("\n\t\t}\n");
+		} else {
+			sb.append(String.format("\t\tthis.result.set%s(%s);\n", 
+				this.fieldNameCapatalized, 
+				this.fieldName));
+		}		
 
 		sb.append(String.format("\t\treturn %s;\n", "this"));
 		sb.append("\t}");
