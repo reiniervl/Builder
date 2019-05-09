@@ -7,13 +7,10 @@ import com.rvlstudio.annotation.BuilderField;
 public class Test {
 	public static int staticVariable = 5;
 
-	@BuilderField(required = true)
 	private String var1;
 
-	@BuilderField(required = true)
 	private int var2;
 
-	@BuilderField(required = true)
 	private int var3;
 	
 	@BuilderField(required = true)

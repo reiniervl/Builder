@@ -34,7 +34,7 @@ class Automatic {
   @BuilderField(required = true)
 	private String var2;
 	
-	@NotNull // Has the equivelant effect
+	@NotNull // Has the equivelant effect of using: @BuilderField(required = true)
 	private Object var3;
   
   public int getVar1() { return var1; }
