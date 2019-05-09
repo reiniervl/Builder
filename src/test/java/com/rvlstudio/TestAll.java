@@ -1,5 +1,7 @@
 package com.rvlstudio;
 
+import javax.validation.constraints.NotNull;
+
 import com.rvlstudio.annotation.Builder;
 import com.rvlstudio.annotation.BuilderField;
 
@@ -7,6 +9,7 @@ import com.rvlstudio.annotation.BuilderField;
 public class TestAll {
 	private String var1;
 
+	@NotNull
 	private int var2;
 
 	private int var3;

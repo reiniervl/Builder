@@ -11,6 +11,7 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import static javax.lang.model.element.Modifier.STATIC;
 
 @SupportedAnnotationTypes("com.rvlstudio.annotation.Builder")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
@@ -19,8 +20,12 @@ public class BuilderProcessor extends AbstractProcessor {
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
 		for (TypeElement annotation : annotations) {
 			for (Element element : roundEnv.getElementsAnnotatedWith(annotation)) {
-				List<Element> enclosedFields = element.getEnclosedElements().stream()
-						.filter((e) -> e.getKind().isField()).collect(Collectors.toList());
+				List<Element> enclosedFields = element.getEnclosedElements()
+					.stream()
+					.filter((e) -> e.getKind().isField() && !e.getModifiers()
+						.stream()
+						.anyMatch((m) -> m.equals(STATIC)))
+					.collect(Collectors.toList());
 				this.parseBuilderClass(element, enclosedFields);
 			}
 		}
@@ -38,14 +43,8 @@ public class BuilderProcessor extends AbstractProcessor {
 				.filter((f) -> f.getAnnotation(BuilderField.class) != null)
 				.map((f) -> new BuilderElement(f))
 				.collect(Collectors.toList());
-				builderClass = new BuilderClass(enclosing, be);
+			builderClass = new BuilderClass(enclosing, be);
 		}
-
-		// for(Element field : fields) {
-		// 	BuilderField fieldAnnotation = field.getAnnotation(BuilderField.class);
-		// 	if (fieldAnnotation == null) continue;
-		// 	builderClass.addElement(new BuilderElement(field));
-		// }
 
 		builderClass.write(processingEnv);
 	}

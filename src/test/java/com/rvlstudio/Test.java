@@ -3,8 +3,10 @@ package com.rvlstudio;
 import com.rvlstudio.annotation.Builder;
 import com.rvlstudio.annotation.BuilderField;
 
-@Builder
+@Builder(all = true)
 public class Test {
+	public static int staticVariable = 5;
+
 	@BuilderField(required = true)
 	private String var1;
 
@@ -14,7 +16,7 @@ public class Test {
 	@BuilderField(required = true)
 	private int var3;
 	
-	@BuilderField(required=true)
+	@BuilderField(required = true)
 	private double var4;
 
 	/**
