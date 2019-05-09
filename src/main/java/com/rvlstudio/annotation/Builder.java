@@ -25,6 +25,8 @@ public @interface Builder {
 	/**
 	 * Alle properties/fields worden gebruikt om een builder te maken als
 	 * de waarde {@code true} wordt megegeven. Standaard waarde is {@code false}
+	 * 
+	 * @return gebruik alle fields
 	 */
 	boolean all() default false;
 }

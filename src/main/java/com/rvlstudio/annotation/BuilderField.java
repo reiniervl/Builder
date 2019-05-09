@@ -20,6 +20,8 @@ public @interface BuilderField {
 	 * Standaard waarde is {@code false}. Als de waarde {@code true} wordt
 	 * gegeven, dan wordt van de field naam en interface gegenereerd,
 	 * dat geimplementeerd wordt door de builder-class.
+	 * 
+	 * @return field moet een waarde hebben
 	 */
 	boolean required() default false;
 }
