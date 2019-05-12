@@ -51,7 +51,6 @@ class BuilderClass {
 			}
 		}
 
-
 		try {
 			JavaFileObject srcFile = environment.getFiler().createSourceFile(packageName + "." + this.className);
 			try (Writer writer = srcFile.openWriter()) {
@@ -71,24 +70,38 @@ class BuilderClass {
 			impl.append(" implements ");
 			for (int i = 0; i < interfaces.size(); i++) {
 				impl.append(interfaces.get(i).getiName());
-				if (i + 1 < interfaces.size())
-					impl.append(", ");
+				if (i + 1 < interfaces.size()) impl.append(", ");
 			}
 		}
 
 		sb.append(String.format("%s class %s%s {\n", this.accessModifier, this.className, impl));
-		sb.append(String.format("\t%s result = new %s();\n\n", this.simpleName, this.simpleName));
+		sb.append(String.format("\tprivate %s result = new %s();\n\n", this.simpleName, this.simpleName));
+		sb.append(String.format("\tprivate %s() { }\n\n", this.className));
 
 		String staticMethodName = this.simpleName.substring(0, 1).toLowerCase();
 		if(this.simpleName.length() > 1) staticMethodName += this.simpleName.substring(1);
 		String staticReturnType = this.interfaces.size() > 0 ? interfaces.get(0).getiName() : this.className;
 		sb.append(String.format("\tpublic static %s %s() {\n\t\treturn new %s();\n\t}\n\n", staticReturnType, staticMethodName, this.className));
 
+		boolean allSetters = true;
 		for (BuilderElement element : this.elements) {
 			sb.append(element.toString()).append("\n\n");
+			if(allSetters) allSetters = element.hasSetter();
 		}
 
-		sb.append(String.format("\tpublic %s build() {\n\t\treturn result;\n\t}\n", this.simpleName));
+		sb.append(String.format("\tpublic %s build() {\n\t\treturn result;\n\t}\n\n", this.simpleName));
+
+		if(!allSetters) {
+			sb.append("\tprivate void setField(Object obj, Object value, String fieldName) {\n")
+				.append("\t\t	try {\n")
+				.append("\t\t\tjava.lang.reflect.Field field = obj.getClass().getDeclaredField(fieldName);\n")
+				.append("\t\t\tfield.setAccessible(true);\n")
+				.append("\t\t\tfield.set(obj, value);\n")
+				.append("\t\t} catch(NoSuchFieldException | SecurityException | IllegalAccessException e) {\n")
+				.append("\t\t\te.printStackTrace();\n")
+				.append("\t\t}\n\t}\n");
+		}
+
 		sb.append("}");
 
 		return sb.toString();
