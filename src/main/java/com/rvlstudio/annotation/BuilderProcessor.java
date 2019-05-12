@@ -2,6 +2,7 @@ package com.rvlstudio.annotation;
 
 import static javax.lang.model.element.Modifier.STATIC;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -13,10 +14,15 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeKind;
+import javax.lang.model.util.Elements;
+import javax.tools.Diagnostic.Kind;
 
 @SupportedAnnotationTypes("com.rvlstudio.annotation.Builder")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class BuilderProcessor extends AbstractProcessor {
+	private ArrayList<BuilderClass> bc = new ArrayList<>();
+
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
 		for (TypeElement annotation : annotations) {
@@ -30,23 +36,32 @@ public class BuilderProcessor extends AbstractProcessor {
 				this.parseBuilderClass(element, enclosedFields);
 			}
 		}
+		if(roundEnv.processingOver()) {
+			for(BuilderClass b : bc) {
+				b.write(processingEnv);
+			}
+		}
 		return false;
 	}
 
 	private void parseBuilderClass(Element enclosing, List<Element> fields) {
-		BuilderClass builderClass;
-
+		List<BuilderElement> be;
 		if(enclosing.getAnnotation(Builder.class).all()) {
-			List<BuilderElement> be = fields.stream().map((f) -> new BuilderElement(f)).collect(Collectors.toList());
-			builderClass = new BuilderClass(enclosing, be);
+			be = fields.stream().map((f) -> new BuilderElement(f)).collect(Collectors.toList());
 		} else {
-			List<BuilderElement> be = fields.stream()
+			Elements elements = processingEnv.getElementUtils();
+			be = fields.stream()
 				.filter((f) -> f.getAnnotation(BuilderField.class) != null)
-				.map((f) -> new BuilderElement(f))
+				.map((f) -> {
+				if(f.asType().getKind() == TypeKind.DECLARED &&	elements.getTypeElement(f.asType().toString()).getAnnotation(Builder.class) != null) {
+					System.out.println(elements.getTypeElement(f.asType() + "Builder"));
+					return new BuilderElement(f, f.asType() + "Builder");
+				}
+					return new BuilderElement(f);
+				})
 				.collect(Collectors.toList());
-			builderClass = new BuilderClass(enclosing, be);
 		}
-
-		builderClass.write(processingEnv);
+		processingEnv.getMessager().printMessage(Kind.NOTE, "Parsed Class: " + enclosing.getSimpleName());
+		bc.add(new BuilderClass(enclosing, be));
 	}
 }
