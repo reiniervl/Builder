@@ -9,7 +9,7 @@
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -37,6 +37,11 @@
 					<target>1.8</target>
 					<compilerArgument>-proc:none</compilerArgument>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>javax.validation</groupId>
+				<artifactId>validation-api</artifactId>
+				<version>1.0.0.GA</version>
 			</plugin>
 		</plugins>
 	</build>

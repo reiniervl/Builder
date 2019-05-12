@@ -11,6 +11,8 @@ class BuilderElement {
 	private String fieldType;
 	private String returnType;
 	private boolean required;
+	private boolean hasGetter;
+	private boolean hasSetter;
 
 	public BuilderElement(Element element) {
 		this(element, element.getEnclosingElement().getSimpleName() + "Builder");
@@ -23,6 +25,8 @@ class BuilderElement {
 		this.fieldNameCapatalized = BuilderElement.capatalize(this.fieldName);
 		this.fieldType = element.asType().toString();
 		this.returnType = returnType;
+		this.hasGetter = BuilderElement.hasGetter(element);
+		this.hasSetter = BuilderElement.hasSetter(element);
 
 		BuilderField bf = element.getAnnotation(BuilderField.class);
 		if(bf != null && bf.required()) this.required = true;
@@ -38,25 +42,15 @@ class BuilderElement {
 			this.fieldType,
 			this.fieldName));
 
-		if(this.isRequired()) {
-			sb.append("\t\t")
-				.append("try {")
-				.append("\n\t\t\t")
-				.append(String.format("java.lang.reflect.Field field = result.getClass().getDeclaredField(\"%s\");", this.fieldName))
-				.append("\n\t\t\t")
-				.append("field.setAccessible(true);")
-				.append("\n\t\t\t")
-				.append(String.format("field.set(result, %s);", this.fieldName))
-				.append("\n\t\t")
-				.append("} catch(NoSuchFieldException | SecurityException | IllegalAccessException e) {")
-				.append("\n\t\t\t")
-				.append("e.printStackTrace();")
-				.append("\n\t\t}\n");
-		} else {
+		if(this.hasSetter) {
 			sb.append(String.format("\t\tthis.result.set%s(%s);\n", 
 				this.fieldNameCapatalized, 
 				this.fieldName));
-		}		
+		} else {
+			sb.append(String.format("\t\tthis.setField(result, %s, \"%s\");\n", 
+				this.fieldName, 
+				this.fieldName));
+		}
 
 		sb.append(String.format("\t\treturn %s;\n", "this"));
 		sb.append("\t}");
@@ -67,14 +61,6 @@ class BuilderElement {
 	@Override
 	public String toString() {
 		return this.generate();
-	}
-
-	private static String capatalize(String var) {
-		String result = "";
-		if(var != null && var.length() > 0) {
-			result = var.substring(0, 1).toUpperCase() + var.substring(1);
-		}
-		return result;
 	}
 	
 	public String getAccessModifier() {
@@ -124,8 +110,34 @@ class BuilderElement {
 	public void setRequired(boolean required) {
 		this.required = required;
 	}
-	
+
+	public boolean hasGetter() {
+		return hasGetter;
+	}
+
+	public boolean hasSetter() {
+		return hasSetter;
+	}
+		
 	public Element get() {
 		return this.element;
+	}
+
+	private static boolean hasGetter(Element element) {
+		String fname = BuilderElement.capatalize(element.getSimpleName().toString());
+		return element.getEnclosingElement().getEnclosedElements().stream().anyMatch((e) -> e.getSimpleName().toString().startsWith("get" + fname));
+	}
+
+	private static boolean hasSetter(Element element) {
+		String fname = BuilderElement.capatalize(element.getSimpleName().toString());
+		return element.getEnclosingElement().getEnclosedElements().stream().anyMatch((e) -> e.getSimpleName().toString().startsWith("set" + fname));
+	}
+
+	private static String capatalize(String var) {
+		String result = "";
+		if(var != null && var.length() > 0) {
+			result = var.substring(0, 1).toUpperCase() + var.substring(1);
+		}
+		return result;
 	}
 }

@@ -1,5 +1,7 @@
 package com.rvlstudio.annotation;
 
+import static javax.lang.model.element.Modifier.STATIC;
+
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -11,7 +13,6 @@ import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
-import static javax.lang.model.element.Modifier.STATIC;
 
 @SupportedAnnotationTypes("com.rvlstudio.annotation.Builder")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
