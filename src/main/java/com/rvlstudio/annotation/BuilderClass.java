@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.lang.model.element.Element;
@@ -81,7 +82,6 @@ class BuilderClass {
 
 		boolean allSetters = true;
 		for (BuilderElement element : this.elements) {
-			System.out.println(environment.getElementUtils().getTypeElement(element.getFieldType()));
 			sb.append(element.toString()).append("\n\n");
 			if(allSetters) allSetters = element.hasSetter();
 		}
@@ -118,5 +118,66 @@ class BuilderClass {
 
 	private void sortFields() {
 		elements.sort((e1, e2) -> e1.isRequired() ? -1 : e2.isRequired() ? 1 : 0);
+	}
+
+	public boolean containsFluent() {
+		return elements
+			.stream()
+			.anyMatch((e) -> e.isFluent());
+	}
+
+	public List<BuilderElement> getFluentElements() {
+		return elements
+			.stream()
+			.filter((e) -> e.isFluent())
+			.collect(Collectors.toList());
+	}
+
+	public Element getEnclosing() {
+		return enclosing;
+	}
+
+	public void setEnclosing(Element enclosing) {
+		this.enclosing = enclosing;
+	}
+
+	public String getAccessModifier() {
+		return accessModifier;
+	}
+
+	public void setAccessModifier(String accessModifier) {
+		this.accessModifier = accessModifier;
+	}
+
+	public String getClassName() {
+		return className;
+	}
+	
+	public void setClassName(String className) {
+		this.className = className;
+	}
+	
+	public String getSimpleName() {
+		return simpleName;
+	}
+	
+	public void setSimpleName(String simpleName) {
+		this.simpleName = simpleName;
+	}
+	
+	public List<BuilderElement> getElements() {
+		return elements;
+	}
+	
+	public void setElements(List<BuilderElement> elements) {
+		this.elements = elements;
+	}
+	
+	public List<BuilderInterface> getInterfaces() {
+		return interfaces;
+	}
+	
+	public void setInterfaces(List<BuilderInterface> interfaces) {
+		this.interfaces = interfaces;
 	}
 }

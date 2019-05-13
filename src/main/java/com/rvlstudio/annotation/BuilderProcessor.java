@@ -2,9 +2,11 @@ package com.rvlstudio.annotation;
 
 import static javax.lang.model.element.Modifier.STATIC;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 import java.util.stream.Collectors;
 
 import javax.annotation.processing.AbstractProcessor;
@@ -16,12 +18,11 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.util.Elements;
-import javax.tools.Diagnostic.Kind;
 
 @SupportedAnnotationTypes("com.rvlstudio.annotation.Builder")
 @SupportedSourceVersion(SourceVersion.RELEASE_8)
 public class BuilderProcessor extends AbstractProcessor {
-	private ArrayList<BuilderClass> bc = new ArrayList<>();
+	private Map<String, BuilderClass> classMap = new HashMap<>();
 
 	@Override
 	public boolean process(final Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) {
@@ -37,8 +38,17 @@ public class BuilderProcessor extends AbstractProcessor {
 			}
 		}
 		if(roundEnv.processingOver()) {
-			for(BuilderClass b : bc) {
-				b.write(processingEnv);
+			for(Entry<String, BuilderClass> entry : classMap.entrySet()) {
+				System.out.println("Entry: "+ entry.getKey());
+				if(entry.getValue().containsFluent()) {
+					entry.getValue().getFluentElements().forEach((e) -> {
+						System.out.println("fieldType: " + e.getFieldType());
+					});
+				}
+			}
+			for(Entry<String, BuilderClass> entry : classMap.entrySet()) {
+				
+				entry.getValue().write(processingEnv);
 			}
 		}
 		return false;
@@ -53,15 +63,17 @@ public class BuilderProcessor extends AbstractProcessor {
 			be = fields.stream()
 				.filter((f) -> f.getAnnotation(BuilderField.class) != null)
 				.map((f) -> {
+					System.out.println("Kind: " + f.asType().getKind());
 				if(f.asType().getKind() == TypeKind.DECLARED &&	elements.getTypeElement(f.asType().toString()).getAnnotation(Builder.class) != null) {
-					System.out.println(elements.getTypeElement(f.asType() + "Builder"));
+					System.out.println("Builder: " + elements.getTypeElement(f.asType() + "Builder"));
 					return new BuilderElement(f, f.asType() + "Builder");
 				}
 					return new BuilderElement(f);
 				})
 				.collect(Collectors.toList());
 		}
-		processingEnv.getMessager().printMessage(Kind.NOTE, "Parsed Class: " + enclosing.getSimpleName());
-		bc.add(new BuilderClass(enclosing, be));
+		BuilderClass b = new BuilderClass(enclosing, be);
+		System.out.println("[proc ] Parsed Class: " + b.getSimpleName());
+		classMap.put(b.getSimpleName(), b);
 	}
 }
