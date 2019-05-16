@@ -13,14 +13,21 @@ class BuilderElement {
 	private boolean required;
 	private boolean hasGetter;
 	private boolean hasSetter;
-	private boolean fluent = true;
+	private boolean fluent;
 
 	public BuilderElement(Element element) {
-		this(element, element.getEnclosingElement().getSimpleName() + "Builder");
-		fluent = false;
+		this(element, element.getEnclosingElement().getSimpleName() + "Builder", false);
+	}
+
+	public BuilderElement(Element element, boolean fluent) {
+		this(element, element.getEnclosingElement().getSimpleName() + "Builder", fluent);
 	}
 
 	public BuilderElement(Element element, String returnType) {
+		this(element, returnType, false);
+	}
+
+	public BuilderElement(Element element, String returnType, boolean fluent) {
 		this.element = element;
 		this.accessModifier = "public";
 		this.fieldName = element.getSimpleName().toString();
@@ -29,6 +36,7 @@ class BuilderElement {
 		this.returnType = returnType;
 		this.hasGetter = BuilderElement.hasGetter(element);
 		this.hasSetter = BuilderElement.hasSetter(element);
+		this.fluent = fluent;
 
 		BuilderField bf = element.getAnnotation(BuilderField.class);
 		if (bf != null && bf.required())

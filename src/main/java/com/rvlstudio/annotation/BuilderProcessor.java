@@ -39,17 +39,16 @@ public class BuilderProcessor extends AbstractProcessor {
 		}
 		if(roundEnv.processingOver()) {
 			for(Entry<String, BuilderClass> entry : classMap.entrySet()) {
-				System.out.println("Entry: "+ entry.getKey());
+				System.out.println("[entry] "+ entry.getKey());
 				if(entry.getValue().containsFluent()) {
 					entry.getValue().getFluentElements().forEach((e) -> {
 						System.out.println("fieldType: " + e.getFieldType());
+						System.out.println("returnType: " + e.getReturnType());
+						System.out.println(classMap.get(e.getReturnType()).getSimpleName());
 					});
 				}
 			}
-			for(Entry<String, BuilderClass> entry : classMap.entrySet()) {
-				
-				entry.getValue().write(processingEnv);
-			}
+			
 		}
 		return false;
 	}
@@ -65,15 +64,17 @@ public class BuilderProcessor extends AbstractProcessor {
 				.map((f) -> {
 					System.out.println("Kind: " + f.asType().getKind());
 				if(f.asType().getKind() == TypeKind.DECLARED &&	elements.getTypeElement(f.asType().toString()).getAnnotation(Builder.class) != null) {
-					System.out.println("Builder: " + elements.getTypeElement(f.asType() + "Builder"));
-					return new BuilderElement(f, f.asType() + "Builder");
+					System.out.println("Builder: " + elements.getTypeElement(f.asType().toString()) + "Builder");
+					// UNDONE: return new BuilderElement(f, f.asType() + "Builder");
+					return new BuilderElement(f);
 				}
 					return new BuilderElement(f);
 				})
 				.collect(Collectors.toList());
 		}
 		BuilderClass b = new BuilderClass(enclosing, be);
-		System.out.println("[proc ] Parsed Class: " + b.getSimpleName());
-		classMap.put(b.getSimpleName(), b);
+		System.out.println("[proc] Parsed Class: " + b.getSimpleName());
+		// classMap.put(b.getSimpleName() + "Builder", b);
+		b.write(processingEnv);
 	}
 }
